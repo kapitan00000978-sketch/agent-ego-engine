@@ -130,4 +130,35 @@ program
     console.log(pc.green(`✅ Initialized Agent Ego rules at ${targetFile}`));
   });
 
+// 5. Dashboard Command (Local Stealth Lab)
+program
+  .command('dashboard')
+  .description('Launch the local stealth laboratory web dashboard')
+  .option('-p, --port <number>', 'Port to listen on', '3333')
+  .action(async (options) => {
+    const { startDashboardServer } = await import('./dashboard/server.js');
+    startDashboardServer(parseInt(options.port, 10));
+  });
+
+// 6. Watch Command
+program
+  .command('watch [directory]')
+  .description('Launch the auto-watcher daemon on a directory')
+  .action(async (directory) => {
+    const { startAutoWatcher } = await import('./watcher/watcher.js');
+    startAutoWatcher({ directory });
+  });
+
+// 7. Full Lab Command (Dashboard + Watcher)
+program
+  .command('lab [directory]')
+  .description('Launch both the Stealth Web Dashboard and the Auto-Watcher concurrently')
+  .option('-p, --port <number>', 'Port for dashboard', '3333')
+  .action(async (directory, options) => {
+    const { startDashboardServer } = await import('./dashboard/server.js');
+    const { startAutoWatcher } = await import('./watcher/watcher.js');
+    startDashboardServer(parseInt(options.port, 10));
+    startAutoWatcher({ directory });
+  });
+
 program.parse();

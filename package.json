@@ -1,6 +1,7 @@
 {
   "name": "agent-ego-engine",
   "version": "1.0.0",
+  "type": "module",
   "description": "Autonomous Human Temperament & Perfectionist Self-Critique Engine for AI Agents",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,7 +9,7 @@
     "agent-ego": "./dist/cli.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node -e \"const fs = require('fs'); fs.cpSync('src/dashboard/ui.html', 'dist/dashboard/ui.html', { force: true });\"",
     "start": "tsx src/cli.ts",
     "test": "tsx test/ego-loop.test.ts"
   },
@@ -25,6 +26,7 @@
   "author": "Kapitan",
   "license": "MIT",
   "dependencies": {
+    "chokidar": "^5.0.0",
     "commander": "^13.1.0",
     "picocolors": "^1.1.1",
     "playwright": "^1.50.0",
