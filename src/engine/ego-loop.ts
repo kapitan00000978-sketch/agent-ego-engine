@@ -3,6 +3,7 @@ import { CodeInspector } from '../sensory/code-inspector.js';
 import { VisualInspector } from '../sensory/visual-inspector.js';
 import { DisgustCalculator } from '../gatekeeper/disgust-calculator.js';
 import { CritiqueGenerator } from '../gatekeeper/critique-generator.js';
+import { LessonsMemory } from '../memory/lessons-memory.js';
 
 export interface EgoEvaluateOptions {
   content: string;
@@ -39,6 +40,13 @@ export class EgoLoopEngine {
 
     // 3. Gatekeeper Score & Disgust calculation
     const calc = DisgustCalculator.calculate(allDefects, archetype);
+
+    // Commit mistakes into persistent Lessons Memory so the agent never repeats them
+    if (allDefects.length > 0) {
+      allDefects.forEach((d) => {
+        LessonsMemory.recordMistake(archetype.id, d.category, d.description, d.remedy);
+      });
+    }
 
     // 4. Generate Internal Rant and Correction directives
     const critique = CritiqueGenerator.generateInternalRant(

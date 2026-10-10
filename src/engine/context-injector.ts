@@ -1,4 +1,5 @@
 import { ArchetypeDefinition } from '../types.js';
+import { LessonsMemory } from '../memory/lessons-memory.js';
 
 export class ContextInjector {
   /**
@@ -23,6 +24,7 @@ ${criteriaList}
 
 ## INTERNAL MONOLOGUE BEFORE ANSWERING:
 "${archetype.innerMonologueTemplate}"
+${LessonsMemory.formatLessonsPrompt(archetype.id)}
 
 ---
 ## TASK TO COMPLETE:

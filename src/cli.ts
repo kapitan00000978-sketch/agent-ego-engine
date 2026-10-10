@@ -161,4 +161,87 @@ program
     startAutoWatcher({ directory });
   });
 
+// 8. Squad Assembler Command
+program
+  .command('squad <goal>')
+  .description('Automatically assemble a specialized multi-persona squad for a project')
+  .action(async (goal) => {
+    const { SquadAssembler } = await import('./squad/squad-assembler.js');
+    const plan = SquadAssembler.assemble(goal);
+
+    console.log(pc.bold(pc.cyan(`\n👥  ${plan.squadName}`)));
+    console.log(pc.dim(`Goal: "${plan.objective}"\n`));
+
+    console.log(pc.bold(pc.yellow('Assigned Squad Members:')));
+    plan.members.forEach((m) => {
+      console.log(`  ${m.order}. ${m.archetype.avatar} ${pc.bold(m.archetype.title)}: ${pc.dim(m.responsibility)}`);
+    });
+
+    console.log(pc.bold(pc.magenta('\nExecution Phases & Hand-offs:')));
+    plan.executionPhases.forEach((p, idx) => {
+      console.log(`\n  [Phase ${idx + 1}] ${pc.bold(p.phase)} (Lead: ${pc.green(p.leadMember)})`);
+      console.log(`    ↳ Deliverable: ${p.deliverable}`);
+      console.log(`    ↳ Criteria: ${pc.yellow(p.acceptanceCriteria)}`);
+    });
+    console.log('\n');
+  });
+
+// 9. Self-Healing Auto-Fixer Command
+program
+  .command('fix <filePath>')
+  .description('Surgically auto-repair mechanical defects in a file')
+  .action(async (filePath) => {
+    const { AutoFixer } = await import('./fixer/auto-fixer.js');
+    const fullPath = path.resolve(process.cwd(), filePath);
+    if (!fs.existsSync(fullPath)) {
+      console.error(pc.red(`❌ File not found: ${filePath}`));
+      process.exit(1);
+    }
+
+    const content = fs.readFileSync(fullPath, 'utf-8');
+    const result = AutoFixer.fix(content, path.basename(filePath));
+
+    if (result.modified) {
+      fs.writeFileSync(fullPath, result.content, 'utf-8');
+      console.log(pc.bold(pc.green(`\n🩹 Self-Healing Repair applied to ${filePath}:`)));
+      result.appliedFixes.forEach((f) => console.log(`  ✓ ${f}`));
+    } else {
+      console.log(pc.cyan(`\n✨ No mechanical defects found in ${filePath}. Code is already clean.`));
+    }
+  });
+
+// 10. Lessons Memory Command
+program
+  .command('memory [archetypeId]')
+  .description('Display learned lessons from past rejections')
+  .action(async (archetypeId) => {
+    const { LessonsMemory } = await import('./memory/lessons-memory.js');
+    if (archetypeId) {
+      const lessons = LessonsMemory.getLessonsForArchetype(archetypeId as any);
+      console.log(pc.bold(pc.cyan(`\n🧬 Learned Lessons for [${archetypeId}]:`)));
+      if (lessons.length === 0) {
+        console.log(pc.dim('  No historical mistakes recorded yet for this archetype.'));
+      } else {
+        lessons.forEach((l, i) => {
+          console.log(`  ${i + 1}. [Flagged ${l.occurrences}x]: ${pc.yellow(l.learnedRule)}`);
+        });
+      }
+    } else {
+      console.log(pc.bold(pc.cyan('\n🧬 Global Lessons Memory Overview:\n')));
+      const archetypes = (await import('./archetypes/index.js')).ArchetypeRegistry.list();
+      let total = 0;
+      archetypes.forEach((a) => {
+        const l = LessonsMemory.getLessonsForArchetype(a.id);
+        if (l.length > 0) {
+          total += l.length;
+          console.log(`${a.avatar} ${pc.bold(a.title)}: ${l.length} lesson(s) learned`);
+        }
+      });
+      if (total === 0) {
+        console.log(pc.dim('Lessons memory is ready. Mistakes will be automatically recorded during audits.'));
+      }
+    }
+    console.log('\n');
+  });
+
 program.parse();
