@@ -1,7 +1,7 @@
-import { DefectItem } from '../types.js';
+import { DefectItem, ArchetypeDefinition } from '../types.js';
 
 export class CodeInspector {
-  public static inspect(code: string, fileName = 'input'): DefectItem[] {
+  public static inspect(code: string, fileName = 'input', archetype?: ArchetypeDefinition): DefectItem[] {
     const defects: DefectItem[] = [];
     const lines = code.split('\n');
 
@@ -74,7 +74,44 @@ export class CodeInspector {
           remedy: 'Handle exception explicitly, log with context, or re-throw typed domain error.'
         });
       }
+
+      // 7. Online Marketing & Copy AI Clichés
+      const aiCliches = [
+        "in today's fast-paced",
+        "delve into",
+        "tapestry of",
+        "testament to",
+        "game-changer",
+        "revolutionize",
+        "all-in-one platform for all your needs",
+        "seamlessly integrates"
+      ];
+      for (const cliche of aiCliches) {
+        if (trimmed.toLowerCase().includes(cliche)) {
+          defects.push({
+            severity: 'critical',
+            category: 'marketing',
+            description: `Weak AI Marketing Cliché: "${cliche}"`,
+            fileOrLocation: `${fileName}:${lineNum}`,
+            remedy: 'Replace with concrete, quantifiable human benefit or specific data point.'
+          });
+          break;
+        }
+      }
     });
+
+    // 8. Landing Page / Marketing Checks for HTML
+    if (fileName.endsWith('.html') || fileName.endsWith('.tsx') || fileName.endsWith('.jsx')) {
+      if (!/<button|<a\b[^>]*class=["'][^"']*btn/i.test(code)) {
+        defects.push({
+          severity: 'blocker',
+          category: 'conversion',
+          description: 'No Call-To-Action (CTA) button found in web component',
+          fileOrLocation: fileName,
+          remedy: 'Add prominent primary Call To Action button above the fold.'
+        });
+      }
+    }
 
     return defects;
   }

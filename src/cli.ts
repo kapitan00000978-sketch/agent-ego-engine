@@ -80,16 +80,32 @@ program
 // 3. List Archetypes
 program
   .command('list')
-  .description('List all available archetypes and their criteria')
+  .description('List all available archetypes grouped by domain')
   .action(() => {
-    console.log(pc.bold(pc.cyan('\n🎭 Available Agent Ego Archetypes:\n')));
-    const list = ArchetypeRegistry.list();
-    list.forEach((a) => {
-      console.log(`${a.avatar}  ${pc.bold(a.title)} (${pc.green(a.id)})`);
-      console.log(`   ${pc.dim(a.role)}`);
-      console.log(`   ${pc.yellow('Temperament:')} ${a.temperament}`);
-      console.log(`   ${pc.red('Min Score:')} ${a.minAcceptableScore}/10\n`);
-    });
+    console.log(pc.bold(pc.cyan('\n🎭 Available Agent Ego Archetypes (All Professional Domains):\n')));
+    
+    const categories = [
+      { key: 'marketing', name: '🚀 Online Marketing, Growth & Funnels' },
+      { key: 'engineering', name: '⚙️ Software Engineering, Cloud & Security' },
+      { key: 'product', name: '🧭 Product Management & User Experience' },
+      { key: 'business', name: '💼 Startup Venture & Unit Economics' },
+      { key: 'data-ai', name: '📊 Data Science & Machine Learning' },
+      { key: 'creative', name: '🎨 Creative Direction & Copywriting' }
+    ] as const;
+
+    for (const cat of categories) {
+      const archs = ArchetypeRegistry.listByCategory(cat.key as any);
+      if (archs.length > 0) {
+        console.log(pc.bold(pc.yellow(`\n=== ${cat.name} ===`)));
+        archs.forEach((a) => {
+          console.log(`\n${a.avatar}  ${pc.bold(a.title)} [${pc.green(a.id)}]`);
+          console.log(`   ${pc.dim(a.role)}`);
+          console.log(`   ${pc.cyan('Temperament:')} ${a.temperament}`);
+          console.log(`   ${pc.red('Disgust threshold:')} Minimum score ${a.minAcceptableScore}/10 required`);
+        });
+      }
+    }
+    console.log('\n');
   });
 
 // 4. Init Project Rules

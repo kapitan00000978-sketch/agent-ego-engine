@@ -2,6 +2,7 @@ import { ArchetypeDefinition } from '../types.js';
 
 export const SecurityOfficerArchetype: ArchetypeDefinition = {
   id: 'security-officer',
+  category: 'engineering',
   title: 'Offensive Security & Red-Team Auditor',
   role: 'Chief Information Security Officer (CISO) Persona',
   avatar: '🛡️',

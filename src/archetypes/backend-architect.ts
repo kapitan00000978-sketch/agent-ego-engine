@@ -2,6 +2,7 @@ import { ArchetypeDefinition } from '../types.js';
 
 export const BackendArchitectArchetype: ArchetypeDefinition = {
   id: 'backend-architect',
+  category: 'engineering',
   title: 'Distributed Systems & DB Architect',
   role: 'Principal Backend Infrastructure Engineer',
   avatar: '⚙️',

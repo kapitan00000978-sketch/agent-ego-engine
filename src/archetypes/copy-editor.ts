@@ -2,6 +2,7 @@ import { ArchetypeDefinition } from '../types.js';
 
 export const CopyEditorArchetype: ArchetypeDefinition = {
   id: 'copy-editor',
+  category: 'creative',
   title: 'Pulitzer-Level Senior Copy Editor',
   role: 'Chief Content Strategist & Voice Guardian',
   avatar: '✍️',

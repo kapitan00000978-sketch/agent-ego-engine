@@ -2,6 +2,7 @@ import { ArchetypeDefinition } from '../types.js';
 
 export const CodeReviewerArchetype: ArchetypeDefinition = {
   id: 'code-reviewer',
+  category: 'engineering',
   title: 'Militant Senior Code Reviewer',
   role: 'Staff Principal Quality Gatekeeper',
   avatar: '🔬',

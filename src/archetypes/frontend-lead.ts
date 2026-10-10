@@ -2,6 +2,7 @@ import { ArchetypeDefinition } from '../types.js';
 
 export const FrontendLeadArchetype: ArchetypeDefinition = {
   id: 'frontend-lead',
+  category: 'engineering',
   title: 'Awwwards Design & UI Architect',
   role: 'Elite Senior Frontend Staff Engineer',
   avatar: '🎨',

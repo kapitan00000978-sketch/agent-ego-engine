@@ -91,7 +91,35 @@ async function runTests() {
   console.log(`   Auto-detected correctly: ${arch1.id}, ${arch2.id}, ${arch3.id}`);
   console.log('   ✅ Test 3 Passed: Semantic detection working!\n');
 
-  console.log('🎉 ALL TESTS PASSED SUCCESSFULLY! AGENT EGO ENGINE IS FULLY OPERATIONAL.');
+  // Test 4: Online Marketing Cliché Rejection
+  console.log('Test 4: Testing Marketing Cliché & Slop Rejection...');
+  const lameMarketingCopy = `
+    Welcome to our startup. In today's fast-paced digital world, our revolutionary all-in-one platform for all your needs seamlessly integrates.
+  `;
+  const growthArch = ArchetypeRegistry.get('growth-marketer');
+  const result4 = await EgoLoopEngine.evaluate({
+    content: lameMarketingCopy,
+    archetype: growthArch,
+    fileName: 'landing-copy.txt'
+  });
+
+  console.log(`   Marketing Score: ${result4.score}/10`);
+  console.log(`   Passed: ${result4.passed}`);
+  console.log(`   Disgust Level: ${result4.disgustLevel}`);
+  if (result4.passed) {
+    throw new Error('Test 4 Failed: Lame AI marketing clichés should have been rejected!');
+  }
+  console.log('   ✅ Test 4 Passed: Growth Marketer archetype rejected AI marketing fluff!\n');
+
+  // Test 5: Verify all 14 archetypes across 6 domains
+  const allArchetypes = ArchetypeRegistry.list();
+  console.log(`Test 5: Verifying total domain archetypes loaded: ${allArchetypes.length}...`);
+  if (allArchetypes.length < 14) {
+    throw new Error(`Expected at least 14 archetypes, found ${allArchetypes.length}`);
+  }
+  console.log('   ✅ Test 5 Passed: All 14 professional domain archetypes active!\n');
+
+  console.log('🎉 ALL TESTS PASSED SUCCESSFULLY! AGENT EGO ENGINE IS FULLY OPERATIONAL ACROSS ALL DOMAINS.');
 }
 
 runTests().catch((err) => {

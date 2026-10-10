@@ -1,14 +1,40 @@
 import { z } from 'zod';
 
+export type ArchetypeCategory =
+  | 'engineering'
+  | 'marketing'
+  | 'product'
+  | 'data-ai'
+  | 'creative'
+  | 'business';
+
 export type ArchetypeId =
+  // Engineering & DevOps
   | 'frontend-lead'
   | 'backend-architect'
   | 'security-officer'
+  | 'code-reviewer'
+  | 'sre-devops'
+  | 'dba-optimizer'
+  // Online Marketing & Growth
+  | 'growth-marketer'
+  | 'seo-strategist'
+  | 'cro-specialist'
+  | 'paid-ads-buyer'
+  | 'viral-creator'
+  // Product & Business
+  | 'product-manager'
+  | 'startup-founder'
+  // Data & Machine Learning
+  | 'data-scientist'
+  | 'ml-engineer'
+  // Content & Creative
   | 'copy-editor'
-  | 'code-reviewer';
+  | 'brand-designer';
 
 export interface ArchetypeDefinition {
   id: ArchetypeId;
+  category: ArchetypeCategory;
   title: string;
   role: string;
   avatar: string;
@@ -23,7 +49,7 @@ export type DisgustLevel = 'none' | 'mildly_annoyed' | 'furious' | 'unacceptable
 
 export interface DefectItem {
   severity: 'blocker' | 'critical' | 'moderate';
-  category: 'style' | 'performance' | 'security' | 'sloppiness' | 'architecture';
+  category: 'style' | 'performance' | 'security' | 'sloppiness' | 'architecture' | 'marketing' | 'conversion';
   description: string;
   fileOrLocation?: string;
   remedy: string;
@@ -40,7 +66,7 @@ export interface EvaluationResult {
 }
 
 export interface SensoryInspectionInput {
-  type: 'code' | 'web' | 'text';
+  type: 'code' | 'web' | 'text' | 'marketing' | 'data';
   content?: string;
   filePath?: string;
   url?: string;

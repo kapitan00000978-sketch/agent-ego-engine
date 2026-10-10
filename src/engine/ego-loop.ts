@@ -18,7 +18,7 @@ export class EgoLoopEngine {
     const allDefects: DefectItem[] = [];
 
     // 1. Code sensory audit
-    const codeDefects = CodeInspector.inspect(content, fileName);
+    const codeDefects = CodeInspector.inspect(content, fileName, archetype);
     allDefects.push(...codeDefects);
 
     // 2. Visual sensory audit (if HTML and requested)
