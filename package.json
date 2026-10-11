@@ -11,8 +11,9 @@
   "scripts": {
     "build": "tsc && node -e \"const fs = require('fs'); fs.cpSync('src/dashboard/ui.html', 'dist/dashboard/ui.html', { force: true });\"",
     "start": "tsx src/cli.ts",
-    "test": "tsx --test \"test/ego-loop.test.ts\" \"test/auto-fixer.test.ts\" \"test/profession-spec.test.ts\" \"test/calibration.test.ts\""
+    "test": "tsx --test \"test/ego-loop.test.ts\" \"test/auto-fixer.test.ts\" \"test/profession-spec.test.ts\" \"test/calibration.test.ts\" \"test/universal-synthesizer.test.ts\""
   },
+
 
 
   "keywords": [
