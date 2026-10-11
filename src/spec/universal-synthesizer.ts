@@ -98,6 +98,7 @@ export class UniversalProfessionSynthesizer {
           }
 
           // 2. Ambiguity & hand-waving claims
+
           if (/(etc\.|and so on|magic happens here|to be decided)/i.test(trimmed) && !trimmed.startsWith('//')) {
             diagnostics.push({
               file: ctx.targetPath,
@@ -108,12 +109,38 @@ export class UniversalProfessionSynthesizer {
               remedy: 'Specify explicit edge cases, exact values, or concrete parameters.'
             });
           }
+
+          // 3. Security vulnerabilities (SQL concatenation)
+          if (/(SELECT|INSERT|UPDATE|DELETE)\s+.*(\+|\$\{)/i.test(trimmed)) {
+
+            diagnostics.push({
+              file: ctx.targetPath,
+              line: lineNum,
+              ruleId: 'SECURITY_SQL_CONCATENATION',
+              severity: 'hard_gate',
+              message: `High-risk SQL injection vector: string concatenation detected`,
+              remedy: 'Use parameterized queries or prepared statements.'
+            });
+          }
+
+          // 4. Accessibility & UI defects in markup
+          if (/<img\b/i.test(trimmed) && !/\balt\s*=/i.test(trimmed)) {
+            diagnostics.push({
+              file: ctx.targetPath,
+              line: lineNum,
+              ruleId: 'A11Y_IMG_MISSING_ALT',
+              severity: 'critical',
+              message: `Image missing alt attribute: "${trimmed}"`,
+              remedy: 'Provide descriptive alt attribute.'
+            });
+          }
         });
 
         return {
           verifierName: `universal-${roleNormalized.replace(/[^a-z0-9]/g, '-')}`,
           passed: diagnostics.length === 0,
           diagnostics,
+
           metrics: {
             customMetrics: {
               synthesizedProfession: req.domainOrRole,
