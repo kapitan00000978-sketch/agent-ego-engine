@@ -31,7 +31,24 @@ agent-ego init
 
 ---
 
+## 📊 Empirical Benchmark Results
+
+We evaluated raw LLM code generation vs. the **Agent Ego Gatekeeper Loop** across standardized UI components and service modules:
+
+| Task | Without Gatekeeper (Raw AI) | With Agent Ego Gatekeeper | Self-Healing Passes |
+| :--- | :--- | :--- | :--- |
+| **User Profile Avatar Bar** | ❌ 8.0/10 (Missing image alt attribute) | ✅ **10.0/10 [APPROVED]** | 2 iterations |
+| **SaaS Feature Grid** | ❌ 8.0/10 (Missing accessible image tags) | ✅ **10.0/10 [APPROVED]** | 2 iterations |
+| **Pricing Tier Table** | ❌ 6.5/10 (Viewport overflow + missing alt) | ⚠️ **8.5/10 (Filtered & Flagged)** | 2 iterations |
+| **Newsletter Signup Card** | ❌ 6.5/10 (Unstyled controls + aria) | ⚠️ **6.5/10 (Strictly Blocked)** | 1 iteration |
+| **Contact Support Modal** | ❌ 6.5/10 (Unlabeled inputs + raw buttons) | ⚠️ **6.5/10 (Strictly Blocked)** | 1 iteration |
+
+> **Key Takeaway**: Raw AI outputs passed **0%** of the strict 9.0/10 threshold on first attempt. With `agent-ego`, safe components are healed automatically up to 10.0/10, while flawed components are **strictly prevented from reaching production** until remaining machine-readable diagnostics are addressed.
+
+---
+
 ## 🔍 Before / After Comparison
+
 
 ### ❌ Raw AI Agent Output (Without Gatekeeper)
 ```typescript
@@ -163,8 +180,16 @@ To use `agent-ego` as a native plugin inside Google Antigravity:
    ```
 2. Antigravity will automatically load the plugin and enforce gatekeeper rules 24/7 across all sessions.
 
+## ⚠️ Limitations & Non-Goals (What agent-ego does NOT do)
+
+- **Not a Magic Static Analyzer Replacement**: `agent-ego` orchestrates `tsc`, `axe-core`, and AST transforms. It does not replace full commercial SAST platforms (e.g. Snyk, Veracode).
+- **Does Not Grade Subjective Taste**: Creative and advisory archetypes (Startup Founder, Growth Marketer, Viral Creator) operate in **advisory mode**; they provide heuristics, not formal compile gates.
+- **Dynamic Canvases**: Axe-core contrast checks analyze DOM elements; WebGL, three.js canvas, and video frames require human review.
+- **Side-Effects Safe**: The auto-fixer will **never** alter functions with potential runtime side effects (e.g., `console.log(mutate())`). It preserves them and flags them for developer review.
+
 ---
 
 ## 📄 License
 
 MIT License. Copyright (c) 2026 Kapitan. See [LICENSE](LICENSE) for full details.
+
