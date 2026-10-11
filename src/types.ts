@@ -106,6 +106,17 @@ export interface DefectItem {
   remedy: string;
 }
 
+export interface ObjectiveScoreBreakdown {
+  hardGatePassed: boolean;
+  hardGateFailureReason?: string;
+  compilerDiagnosticsCount: number; // tsc syntax & semantic errors
+  linterErrorsCount: number;         // ESLint errors
+  testCoveragePercent: number | 'N/A'; // N/A if not configured, never 0 by default
+  a11yViolationsCount: number;       // axe-core violations
+  visualLayoutShifts: number;        // CLS metrics
+  scoreFormulaSummary: string;
+}
+
 export interface EvaluationResult {
   score: number; // 0.0 to 10.0
   passed: boolean;
@@ -114,9 +125,11 @@ export interface EvaluationResult {
   innerRant: string; // The brutal internal monologue
   instructionsForNextPass: string;
   inspectedAt: string;
+  breakdown?: ObjectiveScoreBreakdown;
   slopDna?: SlopDnaReport;
   craftsmanshipSeal?: CraftsmanshipSeal;
 }
+
 
 export interface SensoryInspectionInput {
   type: 'code' | 'web' | 'text' | 'marketing' | 'data';

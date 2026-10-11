@@ -38,10 +38,12 @@ export class EgoLoopEngine {
     });
 
     // 3. Visual sensory audit (if HTML and requested)
+    let visualMetrics = undefined;
     if (isHtml && runVisualCheck) {
       try {
         const visual = await VisualInspector.inspectHtml(content);
         uniqueDefects.push(...visual.defects);
+        visualMetrics = visual.metrics;
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : String(err);
         uniqueDefects.push({
@@ -53,8 +55,13 @@ export class EgoLoopEngine {
       }
     }
 
-    // 4. Gatekeeper Score & Disgust calculation (incorporating Slop Purity)
-    const calc = DisgustCalculator.calculate(uniqueDefects, archetype);
+    // 4. Gatekeeper Score & Disgust calculation with Hard-Gate Rubric
+    const calc = DisgustCalculator.calculate(uniqueDefects, archetype, {
+      horizontalOverflow: visualMetrics?.horizontalOverflow,
+      clsScore: visualMetrics?.clsScore,
+      a11yViolations: visualMetrics?.contrastIssuesCount
+    });
+
 
     // Commit mistakes into persistent Lessons Memory so the agent never repeats them
     if (uniqueDefects.length > 0) {
@@ -84,9 +91,11 @@ export class EgoLoopEngine {
       innerRant: critique.innerRant,
       instructionsForNextPass: critique.instructionsForNextPass,
       inspectedAt: new Date().toISOString(),
+      breakdown: calc.breakdown,
       slopDna: slopReport,
       craftsmanshipSeal
     };
   }
 }
+
 

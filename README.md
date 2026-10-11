@@ -1,104 +1,87 @@
-# 🧠 Agent Ego Engine (agent-ego)
-> **Autonomous Human Temperament & Perfectionist Self-Critique Engine for AI Agents.**
+# 🛡️ Agent Ego Engine (`agent-ego`)
+> **Deterministic Quality Gatekeeper & Context Wrapper for AI Agents.**
 
-Left unguided, AI agents naturally produce "lazy slop" — placeholders (`// TODO`), unstyled generic cards, and untested code.
+Left unguided, LLMs produce unverified code: missing types, swallowed exceptions, broken viewport layouts, and superficial placeholders.
 
-**`agent-ego`** fixes this at the root. It injects **human pride, craft accountability, and visceral disgust** into AI agents. The agent self-evaluates its work through sensory inspection (code AST and Playwright headless browser rendering). If the work scores below the perfectionist threshold (**9.0/10**), the agent **refuses to show it to the user**, internally rants at itself, and re-executes until the output is immaculate.
-
----
-
-## ⚡ The Architecture
-
-```
-[User Task]
-     │
-     ▼
-1. 🎭 Archetype Selection (Frontend Lead, Backend Architect, Security CISO, Code Reviewer, Copy Editor)
-     │
-     ▼
-2. ⚡ AI Generation (Drafting code / web component)
-     │
-     ▼
-3. 👁️ Sensory Inspection (Code Inspector + Playwright Visual DOM rendering & screenshots)
-     │
-     ▼
-4. 🛑 Disgust & Gatekeeper Calculator (Strict scoring against perfection criteria)
-     ├─ Score < 9.0 (Disgust Level: Furious / Unacceptable)
-     │    └──> 🔄 Output BLOCKED from user. Internal rant generated -> Re-execution loop.
-     │
-     └─ Score >= 9.0 (Disgust Level: None)
-          └──> ✅ APPROVED. Delivered to user with zero back-and-forth required.
-```
+**`agent-ego`** is NOT a psychological intervention. LLMs do not possess psychological states. Instead, `agent-ego` operates as a **two-phase engineering gatekeeper**:
+1. **Pre-execution Context Wrapper**: Injects strict domain invariants, constraints, and non-negotiable boundaries into the agent's prompt.
+2. **Post-execution Deterministic Gatekeeper**: Evaluates outputs through deterministic static inspection, AST parsing, and browser runtime verification.
 
 ---
 
-## 🚀 Quick Start & CLI Usage
+## ⚖️ Deterministic Scoring Rubric & Hard Gates
 
-### 1. Audit any file or component
+The evaluation is based on concrete, machine-verifiable weights:
+
+| Check | Tool / Engine | Impact on Score | Rule Type |
+| :--- | :--- | :--- | :--- |
+| **Compiler Errors** | `tsc` compile diagnostics | **Score = 0.0** | **Hard Gate** (Zero tolerance) |
+| **Linter Errors** | ESLint error count | **Score = 0.0** | **Hard Gate** (Zero tolerance) |
+| **Blocker Defect** | Security vulnerability / SQL concatenation | **-2.5 pts** | Deduction |
+| **Critical Defect** | Swallowed exceptions, type evasion | **-1.5 pts** | Deduction |
+| **Accessibility (a11y)** | `axe-core` violations | **-0.5 pts** (up to -3.0) | Deduction |
+| **Visual Stability** | CLS > 0.1 (via `PerformanceObserver`) | **-1.0 pts** | Deduction |
+| **Viewport Overflow** | `scrollWidth > clientWidth` | **-1.0 pts** | Deduction |
+| **Test Coverage** | Test runner coverage | **-1.0 pts** if <80% | **N/A policy** (Ignored if not configured) |
+
+> **Hard Gate Rule**: If TypeScript syntax or compilation errors exist, the output is rejected immediately with a score of 0.0 regardless of other metrics.
+> **Pass Threshold**: A minimum score of **9.0 / 10.0** is required for output approval.
+
+---
+
+## 🛠️ AST-Based Surgical Auto-Fixer (`agent-ego fix`)
+
+The auto-fixer uses the **TypeScript Compiler AST API (`ts.transform`)**:
+- **Side-Effect Preservation**: If a `console.log(foo())` contains a function call or expression with potential runtime side effects, it is **never** deleted — it is flagged as a warning.
+- **Syntactic Context Safety**: In single-line branches like `if (x) console.log(y);`, replacing the statement safely creates an empty block (`{}`) so subsequent lines do not accidentally bind to the condition.
+- **Rollback Mechanism**: The original content is preserved in memory. If post-transformation compilation produces diagnostic errors, the change is instantly rolled back.
+
+---
+
+## 👁️ Visual Inspector Metrikalari
+
+Playwright orqali amalga oshiriladigan vizual audit quyidagi aniq metrikalarga tayanadi:
+1. **CLS (Cumulative Layout Shift)**: Sahifa yuklanishidan oldin `page.addInitScript` orqali `PerformanceObserver` inyeksiya qilinadi va haqiqiy layout siljishlari o'lchanadi.
+2. **Viewport Overflow**: `document.documentElement.scrollWidth > window.innerWidth` orqali gorizontal buzilishlar tekshiriladi.
+3. **Accessibility**: `axe-core` orqali DOM atributlari va kontrast tahlil qilinadi. *(Eslatma: Axe-core kontrast muammolarining bir qismini ushlaydi, murakkab dynamic canvas yoki gradientlar inson nazoratini talab qiladi).*
+
+---
+
+## 🔒 Dashboard Xavfsizligi
+
+Mahalliy panel (`src/dashboard/server.ts`):
+- Faqat **`127.0.0.1`** (loopback) ga bog'langan (`0.0.0.0` ochiq emas).
+- **DNS Rebinding Himoyasi**: `Host` header qat'iy tekshiriladi.
+- **Cross-Site Hijacking Himoyasi**: `Origin` header tekshiriladi.
+- **Session Token**: Ishga tushganda 48-belgili tasodifiy kriptografik token generatsiya qilinadi.
+
+---
+
+## 💻 CLI Buyruqlari (Jami 12 ta)
+
+| Buyruq | Tavsif |
+| :--- | :--- |
+| `agent-ego audit <file>` | Faylni gatekeeper rubrikasi bo'yicha baholaydi |
+| `agent-ego fix <file>` | AST orqali mexanik xatolarni xavfsiz tozalaydi |
+| `agent-ego slop <file>` | Koddagi AI qoliplari va zaifliklar DNK sini tekshiradi |
+| `agent-ego debate <goal>` | Arxetiplar o'rtasida konsensus tahlili o'tkazadi |
+| `agent-ego squad <goal>` | Loyiha uchun arxetiplar jamoasini shakllantiradi |
+| `agent-ego wrap <prompt>` | Promptni qat'iy domain invariantlariga o'raydi |
+| `agent-ego memory [id]` | Tarixiy xatolar xotirasini ko'rsatadi |
+| `agent-ego list` | 17 ta domain arxetiplari ro'yxatini chiqaradi |
+| `agent-ego init` | Loyihaga `.agents/rules/ego-gatekeeper.md` ni joylaydi |
+| `agent-ego dashboard` | Xavfsiz mahalliy laboratoriya veb-panelini ishga tushiradi |
+| `agent-ego watch [dir]` | Papkani fonda kuzatuvchi daemon |
+| `agent-ego lab [dir]` | Dashboard va Auto-Watcher'ni birgalikda ishga tushiradi |
+
+---
+
+## 📦 Sinovdan o'tkazish
+
 ```bash
-# Automatically detects archetype and audits code
-agent-ego audit src/user-service.ts
+# Barcha testlarni ishga tushirish:
+npm test
 
-# Audit with Playwright visual rendering for HTML/React
-agent-ego audit public/index.html --visual
+# AST Auto-fixer testlari:
+npx tsx test/auto-fixer.test.ts
 ```
-
-### 2. Wrap user prompts with strict Archetype Mandates
-```bash
-agent-ego wrap "Create a payment checkout API with Stripe"
-```
-
-### 3. List available Human Archetypes
-```bash
-agent-ego list
-```
-
-### 4. Initialize Ego Gatekeeper in your project
-```bash
-agent-ego init
-```
-
----
-
-## 🎭 Built-in Human Archetypes
-
-1. 🎨 **Awwwards Design & UI Architect** (`frontend-lead`):
-   * Minimum Score: **9.0/10**
-   * Disgust Triggers: Static boxes without micro-interactions, hardcoded hex colors, lazy bootstrap layouts.
-2. ⚙️ **Distributed Systems & DB Architect** (`backend-architect`):
-   * Minimum Score: **9.2/10**
-   * Disgust Triggers: Unhandled promise rejections, N+1 query antipatterns, missing schema validations.
-3. 🛡️ **Offensive Security Auditor** (`security-officer`):
-   * Minimum Score: **9.5/10**
-   * Disgust Triggers: String concatenation in SQL, hardcoded secrets, wildcard CORS, missing rate limiting.
-4. 🔬 **Militant Senior Code Reviewer** (`code-reviewer`):
-   * Minimum Score: **9.0/10**
-   * Disgust Triggers: `any` types, missing unit tests, functions > 50 lines, dead code.
-5. ✍️ **Pulitzer-Level Senior Copy Editor** (`copy-editor`):
-   * Minimum Score: **9.0/10**
-   * Disgust Triggers: AI clichés ("delve into", "tapestry"), robotic passive voice.
-
----
-
-## 📦 Programmatic Usage
-
-```typescript
-import { EgoLoopEngine, ArchetypeRegistry } from 'agent-ego-engine';
-
-const archetype = ArchetypeRegistry.get('frontend-lead');
-const result = await EgoLoopEngine.evaluate({
-  content: myComponentCode,
-  archetype,
-  isHtml: true,
-  runVisualCheck: true
-});
-
-if (!result.passed) {
-  console.log(`Blocked! Score: ${result.score}/10`);
-  console.log(result.innerRant);
-  // Feed result.instructionsForNextPass back into the agent!
-}
-```
-
----
-*Created by Kapitan & Antigravity.*
