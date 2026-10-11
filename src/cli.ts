@@ -119,27 +119,96 @@ program
     console.log('\n');
   });
 
-// 4. Init Project Rules
+// 4. Init Project Rules (Multi-Platform Distribution)
 program
   .command('init')
-  .description('Initialize Ego Gatekeeper rules in the current project')
+  .description('Deploy Gatekeeper configurations across Antigravity, Cursor, Claude Code, Git hooks, and GitHub Actions')
   .action(() => {
-    const rulesDir = path.resolve(process.cwd(), '.agents/rules');
-    fs.mkdirSync(rulesDir, { recursive: true });
-    
-    const ruleContent = `
-# Agent Ego Perfectionist Gatekeeper Rule
-# ALL AI AGENTS IN THIS PROJECT ARE GOVERNED BY THE AGENT EGO ENGINE.
+    const cwd = process.cwd();
 
-1. You are forbidden from displaying unfinished code, placeholder comments ("// TODO"), or unstyled UI.
-2. If your work falls below 9.0/10 quality, you must internally reject it and regenerate it without asking the user.
-3. Treat every output with human accountability, pride, and craftsmanship.
+    // A. Antigravity / Shared AGENTS.md
+    const agentsMdContent = `
+# Deterministic Quality Gatekeeper Directive (AGENTS.md)
+# All AI agents operating in this repository are bound by deterministic quality criteria.
+
+1. Hard Gate: Code containing syntax, TypeScript compiler errors, or unhandled linter failures will be rejected with score 0.0.
+2. Zero Placeholder Slop: Do not emit "// TODO", "// implement later", or empty stubs. All emitted units must be complete.
+3. Type Safety: Explicit type parameters and validated schemas (Zod/Pydantic) are required. "any" types and type-evasions are blocked.
+4. UI & Accessibility: Web components must provide valid alt text, accessible ARIA attributes, and zero horizontal viewport overflows.
+5. Exit Standard: Only outputs achieving >= 9.0/10 verified score may be presented to the user.
 `.trim();
+    fs.writeFileSync(path.join(cwd, 'AGENTS.md'), agentsMdContent, 'utf-8');
+    console.log(pc.green(`  ✓ Created AGENTS.md (Root Project Gatekeeper Directive)`));
 
-    const targetFile = path.join(rulesDir, 'ego-gatekeeper.md');
-    fs.writeFileSync(targetFile, ruleContent, 'utf-8');
-    console.log(pc.green(`✅ Initialized Agent Ego rules at ${targetFile}`));
+    // B. Cursor Rules (.cursor/rules/agent-ego.mdc)
+    const cursorDir = path.join(cwd, '.cursor', 'rules');
+    fs.mkdirSync(cursorDir, { recursive: true });
+    const cursorContent = `
+---
+description: Deterministic Gatekeeper and Zero-Slop Rules for Cursor Agent
+globs: *
+alwaysApply: true
+---
+# Cursor Agent Gatekeeper Rules
+- Hard compile gate: Verify syntax before completing response.
+- Do not emit stub code or "// TODO".
+- Adhere to the minimum 9.0/10 craftsmanship standard.
+`.trim();
+    fs.writeFileSync(path.join(cursorDir, 'agent-ego.mdc'), cursorContent, 'utf-8');
+    console.log(pc.green(`  ✓ Created .cursor/rules/agent-ego.mdc (Cursor Rules)`));
+
+    // C. Git Pre-Commit Hook (.git/hooks/pre-commit)
+    const gitHooksDir = path.join(cwd, '.git', 'hooks');
+    if (fs.existsSync(gitHooksDir)) {
+      const hookContent = `#!/bin/sh
+# Agent Ego Pre-Commit Quality Gatekeeper
+echo "🛡️ Running Agent Ego Gatekeeper audit..."
+npx agent-ego audit .
+if [ $? -ne 0 ]; then
+  echo "❌ Commit rejected by Agent Ego Gatekeeper: Score fell below 9.0/10."
+  exit 1
+fi
+echo "✅ Quality Gatekeeper approved commit."
+exit 0
+`;
+      const hookPath = path.join(gitHooksDir, 'pre-commit');
+      fs.writeFileSync(hookPath, hookContent, { mode: 0o755 });
+      console.log(pc.green(`  ✓ Created .git/hooks/pre-commit (Git Pre-Commit Gatekeeper Hook)`));
+    }
+
+    // D. GitHub Actions CI Workflow (.github/workflows/gatekeeper.yml)
+    const ghWorkflowDir = path.join(cwd, '.github', 'workflows');
+    fs.mkdirSync(ghWorkflowDir, { recursive: true });
+    const workflowContent = `name: Agent Ego Quality Gatekeeper CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  gatekeeper-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Dependencies
+        run: npm ci
+      - name: Run TypeScript & ESLint Hard Gates
+        run: npx tsc --noEmit
+      - name: Run Agent Ego Gatekeeper Audit
+        run: npx agent-ego audit src/
+`.trim();
+    fs.writeFileSync(path.join(ghWorkflowDir, 'gatekeeper.yml'), workflowContent, 'utf-8');
+    console.log(pc.green(`  ✓ Created .github/workflows/gatekeeper.yml (GitHub Actions CI Workflow)`));
+
+    console.log(pc.bold(pc.cyan(`\n🎉 Project successfully configured with Agent Ego Gatekeeper across all platforms!\n`)));
   });
+
 
 // 5. Dashboard Command (Local Stealth Lab)
 program
