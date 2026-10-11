@@ -20,7 +20,9 @@ program
   .description('Audit a file or component against the perfectionist gatekeeper')
   .option('-a, --archetype <id>', 'Archetype ID (frontend-lead, backend-architect, security-officer, code-reviewer, copy-editor)')
   .option('-v, --visual', 'Run Playwright visual inspection if HTML/web component', false)
+  .option('--json', 'Output machine-readable JSON report', false)
   .action(async (filePath, options) => {
+
     const fullPath = path.resolve(process.cwd(), filePath);
     if (!fs.existsSync(fullPath)) {
       console.error(pc.red(`❌ File not found: ${filePath}`));
@@ -63,15 +65,36 @@ program
       evalResult.craftsmanshipSeal.architecturalHighlights.forEach((h) => console.log(`  ✓ ${h}`));
     }
 
-    if (!evalResult.passed) {
-      console.log('\n' + pc.bold(pc.red('⛔ RESULT: OUTPUT BLOCKED FROM USER.')));
-      console.log(pc.yellow('The AI agent must resolve these defects before showing the result to the user.\n'));
-      process.exit(1);
+    if (options.json) {
+      const outputJson = {
+        file: filePath,
+        passed: evalResult.passed,
+        score: evalResult.score,
+        hardGateFailure: evalResult.breakdown?.hardGatePassed === false,
+        breakdown: evalResult.breakdown,
+        diagnostics: evalResult.defects.map((d) => ({
+          file: d.fileOrLocation || filePath,
+          severity: d.severity,
+          category: d.category,
+          rule: d.description,
+          remedy: d.remedy
+        }))
+      };
+      console.log(JSON.stringify(outputJson, null, 2));
+      process.exit(evalResult.passed ? 0 : 1);
     } else {
-      console.log('\n' + pc.bold(pc.green('✅ RESULT: APPROVED FOR RELEASE TO USER.')));
-      process.exit(0);
+      if (!evalResult.passed) {
+        console.log('\n' + pc.bold(pc.red('⛔ RESULT: OUTPUT BLOCKED FROM USER.')));
+        console.log(pc.yellow('The AI agent must resolve these defects before showing the result to the user.\n'));
+        process.exit(1);
+      } else {
+        console.log('\n' + pc.bold(pc.green('✅ RESULT: APPROVED FOR RELEASE TO USER.')));
+        process.exit(0);
+      }
     }
   });
+
+
 
 
 // 2. Wrap Prompt Command
