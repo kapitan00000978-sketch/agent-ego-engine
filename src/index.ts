@@ -2,6 +2,7 @@ export * from './types.js';
 export * from './archetypes/index.js';
 export * from './archetypes/custom-archetypes.js';
 export * from './sensory/index.js';
+export * from './sensory/slop-dna-scanner.js';
 export * from './gatekeeper/index.js';
 export * from './engine/index.js';
 export * from './dashboard/server.js';
@@ -9,3 +10,6 @@ export * from './watcher/watcher.js';
 export * from './memory/lessons-memory.js';
 export * from './squad/squad-assembler.js';
 export * from './fixer/auto-fixer.js';
+export * from './debate/war-room-debater.js';
+export * from './certifier/craftsmanship-certifier.js';
+

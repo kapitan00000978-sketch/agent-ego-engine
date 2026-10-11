@@ -48,10 +48,20 @@ program
     console.log('\n' + '─'.repeat(60));
     console.log(pc.bold(`Score: `) + (evalResult.passed ? pc.green(`${evalResult.score}/10 [PASSED]`) : pc.red(`${evalResult.score}/10 [REJECTED]`)));
     console.log(pc.bold(`Disgust Level: `) + pc.yellow(evalResult.disgustLevel));
+    if (evalResult.slopDna) {
+      const purityColor = evalResult.slopDna.overallSlopPurity >= 90 ? pc.green : (evalResult.slopDna.overallSlopPurity >= 70 ? pc.yellow : pc.red);
+      console.log(pc.bold(`Slop Purity Index: `) + purityColor(`${evalResult.slopDna.overallSlopPurity}% Craftsmanship`));
+    }
     console.log('─'.repeat(60));
 
     console.log(pc.bold(pc.magenta('\n🗣️  Internal Monologue / Rant:')));
     console.log(evalResult.innerRant);
+
+    if (evalResult.craftsmanshipSeal) {
+      console.log('\n' + pc.bold(pc.cyan('🏅 ' + evalResult.craftsmanshipSeal.sealTitle)));
+      console.log(pc.dim(`Rationale: ${evalResult.craftsmanshipSeal.uncompromisingRationale}`));
+      evalResult.craftsmanshipSeal.architecturalHighlights.forEach((h) => console.log(`  ✓ ${h}`));
+    }
 
     if (!evalResult.passed) {
       console.log('\n' + pc.bold(pc.red('⛔ RESULT: OUTPUT BLOCKED FROM USER.')));
@@ -62,6 +72,7 @@ program
       process.exit(0);
     }
   });
+
 
 // 2. Wrap Prompt Command
 program
@@ -244,4 +255,68 @@ program
     console.log('\n');
   });
 
+// 11. Cross-Archetype Psychological War-Room Debate
+program
+  .command('debate <topicOrGoal>')
+  .description('Pit opposing archetypes against each other in a psychological war-room to forge a consensus')
+  .option('-p, --personas <ids...>', 'Force specific archetype IDs (e.g., startup-founder security-officer frontend-lead)')
+  .action(async (topicOrGoal, options) => {
+    const { WarRoomDebater } = await import('./debate/war-room-debater.js');
+    const result = WarRoomDebater.debate(topicOrGoal, options.personas);
+
+    console.log(pc.bold(pc.cyan(`\n⚔️  PSYCHOLOGICAL WAR-ROOM: "${topicOrGoal}"`)));
+    console.log(pc.dim(`Consensus Score: ${result.consensusScore}/10 | Participants: ${result.participants.length}\n`));
+
+    console.log(pc.bold(pc.yellow('Debate Transcript & Clash:')));
+    result.debateTranscript.forEach((turn) => {
+      let heatBadge = pc.cyan(`[${turn.heatLevel}]`);
+      if (turn.heatLevel === 'fiery_clash') heatBadge = pc.red(`[🔥 FIERY CLASH]`);
+      if (turn.heatLevel === 'consensus_achieved') heatBadge = pc.green(`[🤝 CONSENSUS]`);
+      console.log(`\n${turn.avatar} ${pc.bold(turn.speaker)} ${heatBadge}:`);
+      console.log(`  "${turn.statement}"`);
+    });
+
+    console.log('\n' + pc.bold(pc.magenta('⚖️  UNCOMPROMISING SYNTHESIS:')));
+    console.log(`  ${result.uncompromisingSynthesis}`);
+
+    console.log('\n' + pc.bold(pc.green('📋 ACTIONABLE WAR-ROOM DIRECTIVES:')));
+    result.actionableDirectives.forEach((dir, i) => {
+      console.log(`  ${i + 1}. ${dir}`);
+    });
+    console.log('\n');
+  });
+
+// 12. Deep Slop DNA Scanner Command
+program
+  .command('slop <filePath>')
+  .description('Dissect a file for AI slop, placeholder DNA, and generic fluff')
+  .action(async (filePath) => {
+    const { SlopDnaScanner } = await import('./sensory/slop-dna-scanner.js');
+    const fullPath = path.resolve(process.cwd(), filePath);
+    if (!fs.existsSync(fullPath)) {
+      console.error(pc.red(`❌ File not found: ${filePath}`));
+      process.exit(1);
+    }
+
+    const content = fs.readFileSync(fullPath, 'utf-8');
+    const { slopReport } = SlopDnaScanner.scan(content, path.basename(filePath));
+
+    console.log(pc.bold(pc.cyan(`\n🧬  Slop DNA Scanner: ${path.basename(filePath)}`)));
+    const purityColor = slopReport.overallSlopPurity >= 90 ? pc.green : (slopReport.overallSlopPurity >= 70 ? pc.yellow : pc.red);
+    console.log(`Craftsmanship Purity: ${purityColor(slopReport.overallSlopPurity + '%')}\n`);
+
+    if (slopReport.metrics.length === 0) {
+      console.log(pc.green('✨ Zero slop detected! High-purity craftsmanship throughout.'));
+    } else {
+      console.log(pc.bold(pc.red('Detected Slop Patterns:')));
+      slopReport.metrics.forEach((m) => {
+        console.log(`\n  🚨 [${pc.bold(m.name)}] - Impact: -${m.scoreImpact} pts`);
+        console.log(`     ${pc.dim(m.verdict)}`);
+        m.snippets.forEach((s) => console.log(`     ↳ ${pc.yellow(s)}`));
+      });
+    }
+    console.log('\n');
+  });
+
 program.parse();
+

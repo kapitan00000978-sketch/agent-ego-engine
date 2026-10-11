@@ -45,7 +45,58 @@ export interface ArchetypeDefinition {
   minAcceptableScore: number;
 }
 
-export type DisgustLevel = 'none' | 'mildly_annoyed' | 'furious' | 'unacceptable_garbage';
+export type DisgustLevel = 
+  | 'none' 
+  | 'condescending_smirk'   // 9.0 - 9.4 (Great, but points out subtle nuances)
+  | 'mildly_annoyed'        // 8.0 - 8.9 (Sub-standard, amateurish)
+  | 'furious'               // 6.0 - 7.9 (Rage against carelessness, architectural violations)
+  | 'unacceptable_garbage'; // < 6.0 (Pure slop, placeholders, security sins)
+
+export interface SlopDnaMetric {
+  name: string;
+  category: 'placeholder_slop' | 'type_evasion' | 'shallow_error_handling' | 'boring_layout' | 'security_sin' | 'marketing_bullshit';
+  scoreImpact: number;
+  detectedCount: number;
+  snippets: string[];
+  verdict: string;
+}
+
+export interface SlopDnaReport {
+  overallSlopPurity: number; // 0% (Pure Slop) to 100% (Pure Craftsmanship)
+  metrics: SlopDnaMetric[];
+  detectedPatterns: string[];
+}
+
+export interface CraftsmanshipSeal {
+  certifiedBy: ArchetypeId;
+  sealTitle: string;
+  score: number;
+  uncompromisingRationale: string;
+  architecturalHighlights: string[];
+  guaranteeTimestamp: string;
+}
+
+export interface DebateParticipant {
+  archetype: ArchetypeDefinition;
+  stance: 'advocate' | 'challenger' | 'realist' | 'absolutist';
+  openingArgument: string;
+  objections: string[];
+  concessions: string[];
+}
+
+export interface CrossArchetypeDebateResult {
+  topicOrCode: string;
+  participants: DebateParticipant[];
+  debateTranscript: Array<{
+    speaker: string;
+    avatar: string;
+    statement: string;
+    heatLevel: 'cold_logic' | 'fiery_clash' | 'grudging_respect' | 'consensus_achieved';
+  }>;
+  consensusScore: number;
+  uncompromisingSynthesis: string;
+  actionableDirectives: string[];
+}
 
 export interface DefectItem {
   severity: 'blocker' | 'critical' | 'moderate';
@@ -63,6 +114,8 @@ export interface EvaluationResult {
   innerRant: string; // The brutal internal monologue
   instructionsForNextPass: string;
   inspectedAt: string;
+  slopDna?: SlopDnaReport;
+  craftsmanshipSeal?: CraftsmanshipSeal;
 }
 
 export interface SensoryInspectionInput {
@@ -81,3 +134,4 @@ export interface VisualInspectionResult {
   screenshotPath?: string;
   flaws: string[];
 }
+

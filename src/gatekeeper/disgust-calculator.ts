@@ -21,12 +21,16 @@ export class DisgustCalculator {
     const passed = score >= archetype.minAcceptableScore;
 
     let disgustLevel: DisgustLevel = 'none';
-    if (score < 4.0) {
+    if (score < 6.0) {
       disgustLevel = 'unacceptable_garbage';
-    } else if (score < 7.0) {
+    } else if (score < 8.0) {
       disgustLevel = 'furious';
     } else if (score < archetype.minAcceptableScore) {
       disgustLevel = 'mildly_annoyed';
+    } else if (score < 9.5) {
+      disgustLevel = 'condescending_smirk';
+    } else {
+      disgustLevel = 'none';
     }
 
     return {
@@ -36,3 +40,4 @@ export class DisgustCalculator {
     };
   }
 }
+
