@@ -2,7 +2,7 @@ import { DefectItem, DisgustLevel, ArchetypeDefinition, ObjectiveScoreBreakdown 
 
 export interface ScoreInputMetrics {
   compilerErrors?: number;
-  linterErrors?: number;
+  linterErrors?: number | 'N/A';
   testCoverage?: number | 'N/A';
   a11yViolations?: number;
   clsScore?: number;
@@ -12,7 +12,7 @@ export interface ScoreInputMetrics {
 export class DisgustCalculator {
   /**
    * Deterministic Rubric with Hard Gates and weighted deductions:
-   * 1. Hard Gate: If tsc errors > 0 OR linter errors > 0 -> Score = 0.0 IMMEDIATELY.
+   * 1. Hard Gate: If tsc errors > 0 -> Score = 0.0. If ESLint is active and errors > 0 -> Score = 0.0. (If ESLint is not configured, it is N/A, not 0).
    * 2. Defect deductions: Blocker (-2.5), Critical (-1.5), Moderate (-0.5).
    * 3. Accessibility deductions: -0.5 per a11y violation (capped at -3.0).
    * 4. Layout/CLS deductions: -1.0 if horizontal overflow; -1.0 if CLS > 0.1.
@@ -29,17 +29,20 @@ export class DisgustCalculator {
     breakdown: ObjectiveScoreBreakdown;
   } {
     const compilerErrors = metrics?.compilerErrors ?? 0;
-    const linterErrors = metrics?.linterErrors ?? 0;
+    const linterErrors = metrics?.linterErrors ?? 'N/A';
     const testCoverage = metrics?.testCoverage ?? 'N/A';
     const a11yViolations = metrics?.a11yViolations ?? 0;
     const clsScore = metrics?.clsScore ?? 0;
     const horizontalOverflow = metrics?.horizontalOverflow ?? false;
 
-    // 1. HARD GATE: Compiler or Linter errors = Score 0.0
-    if (compilerErrors > 0 || linterErrors > 0) {
+    const hasLinterFailure = typeof linterErrors === 'number' && linterErrors > 0;
+
+    // 1. HARD GATE: Compiler errors OR Active Linter errors = Score 0.0
+    if (compilerErrors > 0 || hasLinterFailure) {
       const reason = compilerErrors > 0
         ? `HARD GATE TRIGGERED: ${compilerErrors} TypeScript compiler (tsc) diagnostic error(s).`
         : `HARD GATE TRIGGERED: ${linterErrors} ESLint error(s).`;
+
 
       return {
         score: 0.0,

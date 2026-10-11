@@ -110,9 +110,10 @@ export interface ObjectiveScoreBreakdown {
   hardGatePassed: boolean;
   hardGateFailureReason?: string;
   compilerDiagnosticsCount: number; // tsc syntax & semantic errors
-  linterErrorsCount: number;         // ESLint errors
+  linterErrorsCount: number | 'N/A'; // N/A if ESLint is not configured in project
   testCoveragePercent: number | 'N/A'; // N/A if not configured, never 0 by default
   a11yViolationsCount: number;       // axe-core violations
+
   visualLayoutShifts: number;        // CLS metrics
   scoreFormulaSummary: string;
 }
